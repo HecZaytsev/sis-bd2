@@ -1,0 +1,57 @@
+-- Primary key: nome_tabela_id
+-- chave estangeira: tabela_referenciada
+-- constraints FK: tabelafilha_tabelapai_fk
+
+CREATE TABLE IF NOT EXISTS Autor(
+	autor_id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(80),
+    data_nascimento date
+);
+CREATE TABLE IF NOT EXISTS Livro(
+	livro_id INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(80),
+    data_publicacao date,
+    autor INT NOT NULL -- chave estrangeira, obrigatório autor único
+);
+CREATE TABLE IF NOT EXISTS Biblioteca(
+	biblioteca_id INT PRIMARY KEY AUTO_INCREMENT,
+	razao_social VARCHAR(80),
+    data_abertura date
+    
+);
+CREATE TABLE IF NOT EXISTS Leitor(
+	leitor_id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(80),
+    data_nascimento date,
+    data_cadastro date -- Time now
+    biblioteca INT NOT NULL -- chave estrangeira, obrigatório biblioteca única
+);
+CREATE TABLE IF NOT EXISTS Amizade(
+	leitor1 INT NOT NULL,
+    leitor2 INT NOT NULL
+	-- Chave composta
+    -- Leitor1 x Leitor2
+);
+
+
+CREATE TABLE Leitura(
+	leitor INT NOT NULL, 
+    livro INT NOT NULL
+	-- CHAVE COMPOSTA
+    -- Leitor x Livro
+    
+);
+
+CREATE TABLE Leitor_Biblioteca(
+
+)
+
+CREATE TABLE Biblioteca_Livro( -- Tem esse livro na biblioteca
+	biblioteca INT, -- chave composta
+    livro INT -- chave composta
+);
+
+CREATE TABLE Livro_Leitor( -- 
+);
+
+
