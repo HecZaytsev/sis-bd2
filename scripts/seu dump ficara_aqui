@@ -2,56 +2,131 @@
 -- chave estangeira: tabela_referenciada
 -- constraints FK: tabelafilha_tabelapai_fk
 
+CREATE database db_app_db2;
+USE db_app_db2;
+
 CREATE TABLE IF NOT EXISTS Autor(
 	autor_id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(80),
     data_nascimento date
 );
-CREATE TABLE IF NOT EXISTS Livro(
-	livro_id INT PRIMARY KEY AUTO_INCREMENT,
-    titulo VARCHAR(80),
-    data_publicacao date,
-    autor INT NOT NULL -- chave estrangeira, obrigatório autor único
-);
-CREATE TABLE IF NOT EXISTS Biblioteca(
-	biblioteca_id INT PRIMARY KEY AUTO_INCREMENT,
-	razao_social VARCHAR(80),
-    data_abertura date
-    
-);
+
 CREATE TABLE IF NOT EXISTS Leitor(
 	leitor_id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(80),
     data_nascimento date,
-    data_cadastro date -- Time now
-    biblioteca INT NOT NULL -- chave estrangeira, obrigatório biblioteca única
+    data_cadastro datetime DEFAULT NOW()-- Time now
 );
+
+CREATE TABLE IF NOT EXISTS Livro(
+	livro_id INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(80),
+    data_publicacao date,
+    autor INT NOT NULL, -- FK, obrigatório autor único
+    CONSTRAINT Livro_Autor_fk FOREIGN KEY (autor) REFERENCES autor(autor_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS Biblioteca( -- Pasta agrupadora de livros
+	biblioteca_id INT PRIMARY KEY AUTO_INCREMENT,
+	nome VARCHAR(80), -- Nome da pasta
+    leitor INT NOT NULL,-- FK , Essa pasta pertence a qual leitor, DEVE PERTENCER A 1:1 Leitor
+    CONSTRAINT Biblioteca_Leitor_fk FOREIGN KEY (leitor) REFERENCES leitor(leitor_id)
+);
+
 CREATE TABLE IF NOT EXISTS Amizade(
-	leitor1 INT NOT NULL,
-    leitor2 INT NOT NULL
+	leitor1 INT,
+    leitor2 INT,
 	-- Chave composta
-    -- Leitor1 x Leitor2
+    PRIMARY KEY(leitor1,leitor2),
+    CONSTRAINT Amizade_leitor1_leitor2_uq UNIQUE( leitor1, leitor2)
 );
 
-
-CREATE TABLE Leitura(
+CREATE TABLE Leitura( -- Leitor iniciou leitura de Livro
 	leitor INT NOT NULL, 
-    livro INT NOT NULL
-	-- CHAVE COMPOSTA
-    -- Leitor x Livro
-    
+    livro INT NOT NULL,
+    data_inicio DATE NOT NULL,
+    data_fim DATE,
+	PRIMARY KEY(leitor,livro), -- CHAVE COMPOSTA
+    CONSTRAINT Leitura_leitor_livro_uq UNIQUE( leitor, livro)
 );
 
-CREATE TABLE Leitor_Biblioteca(
-
-)
-
-CREATE TABLE Biblioteca_Livro( -- Tem esse livro na biblioteca
+CREATE TABLE Biblioteca_Livro( -- Livro dentro da pasta
 	biblioteca INT, -- chave composta
-    livro INT -- chave composta
+    livro INT, -- chave composta
+	PRIMARY KEY(biblioteca,livro), -- CHAVE COMPOSTA
+    CONSTRAINT Biblioteca_Livro_biblioteca_livro_uq UNIQUE( biblioteca, livro)
 );
 
-CREATE TABLE Livro_Leitor( -- 
+CREATE TABLE Livro_Leitor( -- Leitor possui livro
+	livro INT,
+    leitor INT,
+	PRIMARY KEY(leitor,livro), -- CHAVE COMPOSTA
+    CONSTRAINT Livro_Leitor_livro_leitor_uq UNIQUE( leitor, livro)
 );
 
 
+-- ###### INSERTS (dados gerados Mockaroo) ##### 
+
+insert into autor (nome, data_nascimento) values ('Rikki Philott', '1984-07-16');
+insert into autor (nome, data_nascimento) values ('Jena Dikes', '1978-06-26');
+insert into autor (nome, data_nascimento) values ('Ebony Seiller', '1933-11-19');
+insert into autor (nome, data_nascimento) values ('Waneta Chapell', '1973-05-14');
+insert into autor (nome, data_nascimento) values ('Minna Aaron', '1999-01-24');
+insert into autor (nome, data_nascimento) values ('Tammy Norcutt', '1920-03-04');
+insert into autor (nome, data_nascimento) values ('Didi Saill', '1941-01-26');
+insert into autor (nome, data_nascimento) values ('Shaylah Crewdson', '1912-10-30');
+insert into autor (nome, data_nascimento) values ('Kristos Gomby', '1995-07-02');
+insert into autor (nome, data_nascimento) values ('Leticia Humby', '1935-08-25');
+
+insert into leitor (nome, data_nascimento) values ('Karoly Lyfield', '1948-02-03');
+insert into leitor (nome, data_nascimento) values ('Naomi Ellis', '1959-01-24');
+insert into leitor (nome, data_nascimento) values ('Dotti Whisker', '1945-06-10');
+insert into leitor (nome, data_nascimento) values ('Marabel Varley', '1954-09-12');
+insert into leitor (nome, data_nascimento) values ('Clair Sudell', '1952-08-20');
+insert into leitor (nome, data_nascimento) values ('Abe MacCaughan', '1979-01-12');
+insert into leitor (nome, data_nascimento) values ('Reese Christopherson', '1967-11-24');
+insert into leitor (nome, data_nascimento) values ('Annadiane Checchi', '1935-09-11');
+insert into leitor (nome, data_nascimento) values ('Reggie Swainston', '1922-05-31');
+insert into leitor (nome, data_nascimento) values ('Daffie Luisetti', '1939-08-02');
+
+insert into livro (titulo, data_publicacao, autor) values ('Brother''s War', '2000-12-25', 2);
+insert into livro (titulo, data_publicacao, autor) values ('I Am Curious (Blue) (Jag är nyfiken - en film i blått)', '1936-04-30', 5);
+insert into livro (titulo, data_publicacao, autor) values ('Fall', '1934-07-31', 9);
+insert into livro (titulo, data_publicacao, autor) values ('The Final Girl', '1913-04-30', 8);
+insert into livro (titulo, data_publicacao, autor) values ('K2', '1937-12-07', 5);
+insert into livro (titulo, data_publicacao, autor) values ('Monte Carlo', '1983-02-26', 10);
+insert into livro (titulo, data_publicacao, autor) values ('Odd Couple II, The', '1933-04-03', 3);
+insert into livro (titulo, data_publicacao, autor) values ('Monster That Challenged the World, The', '2016-03-09', 1);
+insert into livro (titulo, data_publicacao, autor) values ('Tucker & Dale vs Evil', '1964-04-07', 1);
+insert into livro (titulo, data_publicacao, autor) values ('Then She Found Me', '2018-03-25', 1);
+
+insert into biblioteca (nome, leitor) values ('Comedy|Documentary|Drama', 10);
+insert into biblioteca (nome, leitor) values ('Comedy|Sci-Fi', 6);
+insert into biblioteca (nome, leitor) values ('Action|Drama|Thriller', 10);
+insert into biblioteca (nome, leitor) values ('Comedy|Romance', 4);
+insert into biblioteca (nome, leitor) values ('Drama|War', 5);
+insert into biblioteca (nome, leitor) values ('Drama', 8);
+insert into biblioteca (nome, leitor) values ('Comedy|Drama', 2);
+insert into biblioteca (nome, leitor) values ('Comedy|Romance', 8);
+insert into biblioteca (nome, leitor) values ('Action|Animation|Crime', 5);
+insert into biblioteca (nome, leitor) values ('Action|Drama', 6);
+
+insert into amizade (leitor1, leitor2) values (8, 1);
+insert into amizade (leitor1, leitor2) values (8, 4);
+insert into amizade (leitor1, leitor2) values (6, 3);
+insert into amizade (leitor1, leitor2) values (5, 9);
+insert into amizade (leitor1, leitor2) values (4, 7);
+
+
+-- ###### SELECTS #####
+
+SELECT * FROM autor; -- Ids 1 ao 10
+
+SELECT * FROM leitor;-- Ids 1 ao 10
+
+SELECT * FROM livro;-- Ids 1 ao 10
+
+SELECT * FROM biblioteca;-- Ids 1 ao 10
+
+SELECT * FROM amizade; 
