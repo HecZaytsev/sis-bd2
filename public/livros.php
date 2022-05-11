@@ -13,7 +13,7 @@
 
 <body>
     <div class="content">
-        <h1>Bibliófilo's</h1>
+        <h1>Rede Social de Leitores - Hector Mattevi</h1>
 
         <h2>Livros</h2>
         <?php
