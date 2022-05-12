@@ -42,6 +42,9 @@ CREATE TABLE IF NOT EXISTS Amizade(
     CONSTRAINT Amizade_leitor1_leitor2_uq UNIQUE( leitor1, leitor2)
 );
 
+ALTER TABLE Amizade ADD CONSTRAINT leitor1_amizade_fk foreign key (leitor1) REFERENCES leitor(leitor_id);
+ALTER TABLE Amizade ADD CONSTRAINT leitor2_amizade_fk foreign key (leitor2) REFERENCES leitor(leitor_id);
+
 CREATE TABLE Leitura( -- Leitor iniciou leitura de Livro
 	leitor INT NOT NULL, 
     livro INT NOT NULL,
@@ -51,6 +54,9 @@ CREATE TABLE Leitura( -- Leitor iniciou leitura de Livro
     CONSTRAINT Leitura_leitor_livro_uq UNIQUE( leitor, livro)
 );
 
+ALTER TABLE Leitura ADD CONSTRAINT leitor_leitura_fk foreign key (leitor) REFERENCES leitor(leitor_id);
+ALTER TABLE Leitura ADD CONSTRAINT livro_leitura_fk foreign key (livro) REFERENCES livro(livro_id);
+
 CREATE TABLE Biblioteca_Livro( -- Livro dentro da pasta
 	biblioteca INT, -- chave composta
     livro INT, -- chave composta
@@ -58,12 +64,19 @@ CREATE TABLE Biblioteca_Livro( -- Livro dentro da pasta
     CONSTRAINT Biblioteca_Livro_biblioteca_livro_uq UNIQUE( biblioteca, livro)
 );
 
+ALTER TABLE Biblioteca_Livro ADD CONSTRAINT biblioteca_Biblioteca_Livro_fk foreign key (biblioteca) REFERENCES biblioteca(biblioteca_id);
+ALTER TABLE Biblioteca_Livro ADD CONSTRAINT livro_Biblioteca_Livro_fk foreign key (livro) REFERENCES livro(livro_id);
+
+
 CREATE TABLE Livro_Leitor( -- Leitor possui livro
 	livro INT,
     leitor INT,
 	PRIMARY KEY(leitor,livro), -- CHAVE COMPOSTA
     CONSTRAINT Livro_Leitor_livro_leitor_uq UNIQUE( leitor, livro)
 );
+
+ALTER TABLE Livro_Leitor ADD CONSTRAINT livro_Livro_Leitor_fk foreign key (livro) REFERENCES livro(livro_id);
+ALTER TABLE Livro_Leitor ADD CONSTRAINT leitor_Livro_Leitor_fk foreign key (leitor) REFERENCES leitor(leitor_id);
 
 
 -- ###### INSERTS (dados gerados Mockaroo) ##### 
@@ -139,6 +152,17 @@ insert into Livro_Leitor (livro, leitor) values (5, 5);
 insert into Livro_Leitor (livro, leitor) values (6, 8);
 insert into Livro_Leitor (livro, leitor) values (3, 5);
 
+insert into Biblioteca_Livro (biblioteca, livro) values (5, 10);
+insert into Biblioteca_Livro (biblioteca, livro) values (5, 7);
+insert into Biblioteca_Livro (biblioteca, livro) values (3, 3);
+insert into Biblioteca_Livro (biblioteca, livro) values (5, 1);
+insert into Biblioteca_Livro (biblioteca, livro) values (1, 2);
+insert into Biblioteca_Livro (biblioteca, livro) values (2, 3);
+insert into Biblioteca_Livro (biblioteca, livro) values (3, 5);
+insert into Biblioteca_Livro (biblioteca, livro) values (1, 9);
+insert into Biblioteca_Livro (biblioteca, livro) values (7, 6);
+insert into Biblioteca_Livro (biblioteca, livro) values (6, 8);
+
 -- ###### SELECTS #####
 USE  db_app_db2;
 
@@ -172,3 +196,7 @@ SELECT livro.titulo as livro, leitor.nome as leitor FROM Livro_Leitor
 													LEFT JOIN leitor on leitor=leitor.leitor_id;
                                                     
 SELECT nome, data_nascimento FROM autor;
+
+SELECT biblioteca.nome as biblioteca, livro.titulo as livro FROM Biblioteca_Livro 
+															LEFT JOIN biblioteca on biblioteca=biblioteca.biblioteca_id
+															LEFT JOIN livro on livro=livro.livro_id;
