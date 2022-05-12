@@ -16,18 +16,20 @@
     <div class="content">
         <h1>Rede Social de Leitores - Hector Mattevi</h1>
 
-        <h2>Livros</h2>
+        <h2>Leituras</h2>
         <?php
         require 'mysql_server.php';
 
         $conexao = RetornaConexao();
 
-        $titulo = 'titulo';
-        $autor = 'autor';
-        $data_publicacao = 'data_publicacao';
+        $leitor = 'leitor';
+        $livro = 'livro';
+        $inicio = 'data_inicio';
+        $fim = 'data_fim';
 
-        $sql = 'SELECT titulo, autor.nome as autor, data_publicacao FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id';
-
+        $sql = 'SELECT leitor.nome as leitor, livro.titulo as livro , data_inicio, data_fim FROM leitura '.
+                                                                                           'LEFT JOIN leitor on leitor = leitor.leitor_id '.
+                                                                                           'LEFT JOIN livro on livro = livro.livro_id';
 
         $resultado = mysqli_query($conexao, $sql);
         if (!$resultado) {
@@ -37,9 +39,11 @@
         $cabecalho =
         '<table class="table">' .
         '    <tr>' .
-            '        <th>Título</th>' .
-            '        <th>Autor</th>' .
-            '        <th>Data de Publicação</th>' .
+            '        <th>Leitor</th>' .
+            '        <th>Livro</th>' .
+            '        <th>Data Inicio</th>' .
+            '        <th>Data Fim</th>' .
+
             '    </tr>';
 
         echo $cabecalho;
@@ -48,9 +52,10 @@
 
             while ($registro = mysqli_fetch_assoc($resultado)) {
                 echo '<tr>';
-                echo '<td>' . $registro[$titulo] . '</td>' .
-                    '<td>' . $registro[$autor] . '</td>' .
-                    '<td>' . $registro[$data_publicacao] . '</td>';
+                echo '<td>' . $registro[$leitor] . '</td>' .
+                    '<td>' . $registro[$livro] . '</td>' .
+                    '<td>' . $registro[$inicio] . '</td>' .
+                    '<td>' . $registro[$fim] . '</td>';
                 echo '</tr>';
             }
             echo '</table>';

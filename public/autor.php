@@ -16,17 +16,16 @@
     <div class="content">
         <h1>Rede Social de Leitores - Hector Mattevi</h1>
 
-        <h2>Livros</h2>
+        <h2>Autores</h2>
         <?php
         require 'mysql_server.php';
 
         $conexao = RetornaConexao();
 
-        $titulo = 'titulo';
-        $autor = 'autor';
-        $data_publicacao = 'data_publicacao';
+        $nome = 'nome';
+        $nascimento = 'data_nascimento';
 
-        $sql = 'SELECT titulo, autor.nome as autor, data_publicacao FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id';
+        $sql = 'SELECT nome, data_nascimento FROM autor';
 
 
         $resultado = mysqli_query($conexao, $sql);
@@ -35,11 +34,10 @@
         }
 
         $cabecalho =
-        '<table class="table">' .
-        '    <tr>' .
-            '        <th>Título</th>' .
-            '        <th>Autor</th>' .
-            '        <th>Data de Publicação</th>' .
+            '<table class="table">' .
+            '    <tr>' .
+            '        <th>Nome</th>' .
+            '        <th>Data de Nascimento</th>' .
             '    </tr>';
 
         echo $cabecalho;
@@ -48,9 +46,8 @@
 
             while ($registro = mysqli_fetch_assoc($resultado)) {
                 echo '<tr>';
-                echo '<td>' . $registro[$titulo] . '</td>' .
-                    '<td>' . $registro[$autor] . '</td>' .
-                    '<td>' . $registro[$data_publicacao] . '</td>';
+                echo '<td>' . $registro[$nome] . '</td>' .
+                    '<td>' . $registro[$nascimento] . '</td>' ;
                 echo '</tr>';
             }
             echo '</table>';
