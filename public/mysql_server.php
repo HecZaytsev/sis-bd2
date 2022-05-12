@@ -2,7 +2,7 @@
 
 function RetornaConexao()
 {
-  $servername = 'db';
+  $servername = 'localhost';
   $username = 'root';
   $password = 'root';
   $schema = 'db_app_db2';

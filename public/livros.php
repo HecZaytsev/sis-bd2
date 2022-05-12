@@ -23,21 +23,16 @@
 
         $titulo = 'titulo';
         $autor = 'autor';
-        $classificacao = 'classificacao';
+        $data_publicacao = 'data_publicacao';
         /*TODO-1: Adicione uma variavel para cada coluna */
 
 
-        $sql =
-            'SELECT ' . $titulo .
-            '     , ' . $autor .
-            '     , ' . $classificacao .
-            /*TODO-2: Adicione cada variavel a consulta abaixo */
-            '  FROM livros';
+        $sql = 'SELECT titulo, autor.nome as autor, data_publicacao FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id';
 
 
         $resultado = mysqli_query($conexao, $sql);
         if (!$resultado) {
-            echo mysqli_error($conexao);
+            echo '<h3>'.mysqli_error($conexao).'</h3>';
         }
 
 
@@ -45,10 +40,9 @@
         $cabecalho =
             '<table>' .
             '    <tr>' .
-            '        <th>' . $titulo . '</th>' .
-            '        <th>' . $autor . '</th>' .
-            /* TODO-3: Adicione as variaveis ao cabeçalho da tabela */
-            '        <th>' . $classificacao . '</th>' .
+            '        <th>Título</th>' .
+            '        <th>Autor</th>' .
+            '        <th>Data de Publicação</th>' .
             '    </tr>';
 
         echo $cabecalho;
@@ -57,11 +51,9 @@
 
             while ($registro = mysqli_fetch_assoc($resultado)) {
                 echo '<tr>';
-
                 echo '<td>' . $registro[$titulo] . '</td>' .
                     '<td>' . $registro[$autor] . '</td>' .
-                    /* TODO-4: Adicione a tabela os novos registros. */
-                    '<td>' . $registro[$classificacao] . '</td>';
+                    '<td>' . $registro[$data_publicacao] . '</td>';
                 echo '</tr>';
             }
             echo '</table>';
