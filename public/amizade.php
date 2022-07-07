@@ -25,8 +25,7 @@
         $leitor1 = 'leitor';
         $leitor2 = 'amigo';
 
-        $sql = 'SELECT leitor1.nome as leitor, leitor2.nome as amigo FROM amizade LEFT JOIN leitor leitor1 on leitor1 = leitor1.leitor_id '.
-                                                                                 'LEFT JOIN leitor leitor2 on leitor2 = leitor2.leitor_id;' ;
+        $sql = 'SELECT * FROM amizade_vw';
 
 
         $resultado = mysqli_query($conexao, $sql);

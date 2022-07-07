@@ -42,9 +42,6 @@ CREATE TABLE IF NOT EXISTS Amizade(
     CONSTRAINT Amizade_leitor1_leitor2_uq UNIQUE( leitor1, leitor2)
 );
 
-ALTER TABLE Amizade ADD CONSTRAINT leitor1_amizade_fk foreign key (leitor1) REFERENCES leitor(leitor_id);
-ALTER TABLE Amizade ADD CONSTRAINT leitor2_amizade_fk foreign key (leitor2) REFERENCES leitor(leitor_id);
-
 CREATE TABLE Leitura( -- Leitor iniciou leitura de Livro
 	leitor INT NOT NULL, 
     livro INT NOT NULL,
@@ -54,9 +51,6 @@ CREATE TABLE Leitura( -- Leitor iniciou leitura de Livro
     CONSTRAINT Leitura_leitor_livro_uq UNIQUE( leitor, livro)
 );
 
-ALTER TABLE Leitura ADD CONSTRAINT leitor_leitura_fk foreign key (leitor) REFERENCES leitor(leitor_id);
-ALTER TABLE Leitura ADD CONSTRAINT livro_leitura_fk foreign key (livro) REFERENCES livro(livro_id);
-
 CREATE TABLE Biblioteca_Livro( -- Livro dentro da pasta
 	biblioteca INT, -- chave composta
     livro INT, -- chave composta
@@ -64,19 +58,12 @@ CREATE TABLE Biblioteca_Livro( -- Livro dentro da pasta
     CONSTRAINT Biblioteca_Livro_biblioteca_livro_uq UNIQUE( biblioteca, livro)
 );
 
-ALTER TABLE Biblioteca_Livro ADD CONSTRAINT biblioteca_Biblioteca_Livro_fk foreign key (biblioteca) REFERENCES biblioteca(biblioteca_id);
-ALTER TABLE Biblioteca_Livro ADD CONSTRAINT livro_Biblioteca_Livro_fk foreign key (livro) REFERENCES livro(livro_id);
-
-
 CREATE TABLE Livro_Leitor( -- Leitor possui livro
 	livro INT,
     leitor INT,
 	PRIMARY KEY(leitor,livro), -- CHAVE COMPOSTA
     CONSTRAINT Livro_Leitor_livro_leitor_uq UNIQUE( leitor, livro)
 );
-
-ALTER TABLE Livro_Leitor ADD CONSTRAINT livro_Livro_Leitor_fk foreign key (livro) REFERENCES livro(livro_id);
-ALTER TABLE Livro_Leitor ADD CONSTRAINT leitor_Livro_Leitor_fk foreign key (leitor) REFERENCES leitor(leitor_id);
 
 
 -- ###### INSERTS (dados gerados Mockaroo) ##### 
@@ -131,40 +118,8 @@ insert into amizade (leitor1, leitor2) values (6, 3);
 insert into amizade (leitor1, leitor2) values (5, 9);
 insert into amizade (leitor1, leitor2) values (4, 7);
 
-insert into leitura (leitor, livro, data_inicio) values (1, 2, '2022-02-09');
-insert into leitura (leitor, livro, data_inicio) values (5, 9, '2021-12-07');
-insert into leitura (leitor, livro, data_inicio) values (3, 5, '2022-03-03');
-insert into leitura (leitor, livro, data_inicio) values (3, 6, '2022-02-15');
-insert into leitura (leitor, livro, data_inicio) values (1, 10, '2021-08-23');
-insert into leitura (leitor, livro, data_inicio) values (8, 7, '2021-08-27');
-insert into leitura (leitor, livro, data_inicio) values (10, 2, '2022-02-11');
-insert into leitura (leitor, livro, data_inicio) values (7, 9, '2021-10-30');
-insert into leitura (leitor, livro, data_inicio) values (5, 6, '2022-05-01');
-insert into leitura (leitor, livro, data_inicio) values (10, 5, '2021-07-02');
-
-insert into Livro_Leitor (livro, leitor) values (4, 7);
-insert into Livro_Leitor (livro, leitor) values (2, 5);
-insert into Livro_Leitor (livro, leitor) values (10, 5);
-insert into Livro_Leitor (livro, leitor) values (3, 8);
-insert into Livro_Leitor (livro, leitor) values (9, 9);
-insert into Livro_Leitor (livro, leitor) values (10, 9);
-insert into Livro_Leitor (livro, leitor) values (5, 5);
-insert into Livro_Leitor (livro, leitor) values (6, 8);
-insert into Livro_Leitor (livro, leitor) values (3, 5);
-
-insert into Biblioteca_Livro (biblioteca, livro) values (5, 10);
-insert into Biblioteca_Livro (biblioteca, livro) values (5, 7);
-insert into Biblioteca_Livro (biblioteca, livro) values (3, 3);
-insert into Biblioteca_Livro (biblioteca, livro) values (5, 1);
-insert into Biblioteca_Livro (biblioteca, livro) values (1, 2);
-insert into Biblioteca_Livro (biblioteca, livro) values (2, 3);
-insert into Biblioteca_Livro (biblioteca, livro) values (3, 5);
-insert into Biblioteca_Livro (biblioteca, livro) values (1, 9);
-insert into Biblioteca_Livro (biblioteca, livro) values (7, 6);
-insert into Biblioteca_Livro (biblioteca, livro) values (6, 8);
 
 -- ###### SELECTS #####
-USE  db_app_db2;
 
 SELECT * FROM autor; -- Ids 1 ao 10
 
@@ -176,27 +131,53 @@ SELECT * FROM biblioteca;-- Ids 1 ao 10
 
 SELECT * FROM amizade; 
 
-SELECT titulo, autor.nome, data_publicacao FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id;
+-- ###### ADIÇÕES TRABALHO FINAL STORED OBJECTS #####
 
-SELECT leitor1.nome as leitor, leitor2.nome as amigo FROM amizade LEFT JOIN leitor leitor1 on leitor1 = leitor1.leitor_id 
-																  LEFT JOIN leitor leitor2 on leitor2 = leitor2.leitor_id;
-                                                                  
-                                                                  
-																
-SELECT biblioteca.nome as nome, leitor.nome as leitor FROM biblioteca LEFT JOIN leitor on leitor=leitor.leitor_id;
+-- VIEW
+CREATE VIEW amizade_vw AS
+SELECT leitor1.nome as leitor, leitor2.nome as amigo 
+FROM amizade LEFT JOIN leitor leitor1 on leitor1 = leitor1.leitor_id
+LEFT JOIN leitor leitor2 on leitor2 = leitor2.leitor_id;
 
-SELECT nome, data_nascimento, data_cadastro FROM leitor;
+SELECT * FROM amizade_vw;
 
-SELECT leitor.nome as leitor, livro.titulo as livro , data_inicio, data_fim FROM leitura
-											LEFT JOIN leitor on leitor = leitor.leitor_id
-                                            LEFT JOIN livro on livro = livro.livro_id;
-                                            
-SELECT livro.titulo as livro, leitor.nome as leitor FROM Livro_Leitor
-													LEFT JOIN livro on livro=livro.livro_id
-													LEFT JOIN leitor on leitor=leitor.leitor_id;
-                                                    
-SELECT nome, data_nascimento FROM autor;
 
-SELECT biblioteca.nome as biblioteca, livro.titulo as livro FROM Biblioteca_Livro 
-															LEFT JOIN biblioteca on biblioteca=biblioteca.biblioteca_id
-															LEFT JOIN livro on livro=livro.livro_id;
+-- FUNCTION
+
+DELIMITER $$
+CREATE FUNCTION formata_data( data_in date )
+RETURNS CHAR(10)
+DETERMINISTIC
+
+BEGIN
+
+   DECLARE income INT;
+
+   SET income = 0;
+
+   RETURN DATE_FORMAT(data_in,'%d/%m/%Y');
+
+
+END$$
+
+SELECT livro_id, titulo, formata_data(data_publicacao), autor FROM livro;
+
+
+-- PROCEDURE
+DELIMITER $$
+CREATE PROCEDURE  TAMANHO_TABELA(IN cTabela VARCHAR(255), OUT retorno INT)
+BEGIN
+   DECLARE Result INT;
+   SET     @BuildSQL = CONCAT('SET @Result = (SELECT COUNT(*) FROM ', cTabela,')');
+   PREPARE exec1 FROM @BuildSQL;
+   EXECUTE exec1;
+   DEALLOCATE PREPARE exec1;
+   SET retorno = @Result;   
+END$$
+
+set @ret = 0;
+CALL TAMANHO_TABELA('livro',@ret);
+select @ret as REGISTROS;
+
+
+-- TRIGGER

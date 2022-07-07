@@ -26,7 +26,7 @@
         $autor = 'autor';
         $data_publicacao = 'data_publicacao';
 
-        $sql = 'SELECT titulo, autor.nome as autor, data_publicacao FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id';
+        $sql = 'SELECT titulo, autor.nome as autor, formata_data(data_publicacao) as data_publicacao  FROM livro LEFT JOIN autor ON livro.autor = autor.autor_id';
 
 
         $resultado = mysqli_query($conexao, $sql);
