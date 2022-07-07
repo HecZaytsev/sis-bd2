@@ -180,4 +180,50 @@ CALL TAMANHO_TABELA('livro',@ret);
 select @ret as REGISTROS;
 
 
+
+DELIMITER $$
+CREATE PROCEDURE  INSERT_LIVRO_E_AUTOR(IN nTitulo VARCHAR(80)
+									  ,IN nData date
+                                      ,IN nNomeAutor VARCHAR(80)
+                                      )
+BEGIN
+
+	DECLARE idAutor int;
+    SET idAutor := (SELECT autor_id FROM autor
+					WHERE nome LIKE(CONCAT('%',nNomeAutor,'%')));
+    
+    IF isnull(idAutor) THEN 
+		INSERT INTO autor (nome) values (nNomeAutor);
+		SET idAutor := (SELECT autor_id FROM autor
+						WHERE nome LIKE(CONCAT('%',nNomeAutor,'%')));
+	END IF;
+
+	insert into livro (titulo, data_publicacao, autor) values (nTitulo,nData,idAutor);
+
+END$$
+
+SELECT * FROM livro;
+SELECT * FROM autor;
+
+CALL INSERT_LIVRO_E_AUTOR('Livro de Hector','1912-10-30','Hector');
+
 -- TRIGGER
+
+CREATE TABLE IF NOT EXISTS log(
+	log_id INT PRIMARY KEY AUTO_INCREMENT,
+    tabela VARCHAR(20),
+    data_registro datetime
+);
+
+DROP TRIGGER log_livro;
+DELIMITER $$
+CREATE TRIGGER log_livro AFTER INSERT
+ON livro
+FOR EACH ROW
+BEGIN
+
+	INSERT INTO log (tabela,data_registro) VALUES('livro',NOW());
+    
+END$$
+
+insert into livro (titulo, data_publicacao, autor) values ('Triggers', '1937-12-07', 5);
